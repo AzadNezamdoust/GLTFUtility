@@ -35,7 +35,12 @@ namespace Siccity.GLTFUtility {
 			if (uri == null) {
 				// Load entire file
 				if (string.IsNullOrEmpty(filepath)) result.stream = new MemoryStream(bytefile);
-				else result.stream = File.Open(filepath, FileMode.Open);
+                //in iOS only read access is available
+#if UNITY_IPHONE
+                else result.stream = File.OpenRead(filepath);
+#else
+				else result.stream = File.Open(filepath, FileMode);
+#endif
 				result.startOffset = binChunkStart + 8;
 				result.stream.Position = result.startOffset;
 			} else if (uri.StartsWith(embeddedPrefix)) {
@@ -51,7 +56,12 @@ namespace Siccity.GLTFUtility {
 			} else {
 				// Load URI
 				string directoryRoot = Directory.GetParent(filepath).ToString() + "/";
-				result.stream = File.Open(directoryRoot + uri, FileMode.Open);
+				//in iOS only read access is available
+#if UNITY_IPHONE
+                result.stream = File.OpenRead(directoryRoot + uri);
+#else
+				esult.stream = File.Open(directoryRoot + uri, FileMode.Open);
+#endif
 				result.startOffset = result.stream.Length - byteLength;
 			}
 
