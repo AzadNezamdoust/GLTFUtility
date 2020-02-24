@@ -71,7 +71,14 @@ namespace Siccity.GLTFUtility {
 						uwr.Dispose();
 					}
 				} else {
-					Texture2D tex = new Texture2D(2, 2, TextureFormat.ARGB32, true, linear);
+					//Setup new texture format based on platform
+					TextureFormat tFormat = TextureFormat.RGBA32;
+#if UNITY_IOS
+					tFormat = TextureFormat.PVRTC_RGBA2;
+#elif UNITY_ANDROID
+					tFormat = TextureFormat.ETC_RGB4Crunched;
+#endif
+					Texture2D tex = new Texture2D(2, 2, tFormat, true, linear);
 					if (!tex.LoadImage(bytes)) {
 						Debug.Log("mimeType not supported");
 						yield break;
